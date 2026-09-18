@@ -1,0 +1,123 @@
+# XcodeGen project specification — Chapter 5: The Feature That Broke the Graph.
+#
+# Generate the .xcodeproj with:
+#     brew install xcodegen   # one time
+#     cd code/part-2-modular/ch05-dependency-inversion
+#     xcodegen generate
+#     open iTunesSearchApp.xcodeproj
+#
+# Movies is born this chapter as FeatureMovies (MoviesScreen + MovieDetailScreen).
+# Every feature package (FeatureMusicSearch, FeaturePodcasts, FeatureLibrary,
+# FeatureMovies) has dropped its Infrastructure dependency — they depend only
+# on Domain's abstractions (and FeatureLibrary also on the new AppInterfaces,
+# for the LibraryRouter navigation abstraction). The app target is the only
+# place left that imports Infrastructure; it constructs the concretes and
+# injects them ad hoc. FeatureLibraryDemo is a tiny standalone app that boots
+# straight into FeatureLibrary alone — the fast inner loop from Chapter 4,
+# now also a miniature composition root.
+
+name: iTunesSearchApp
+
+options:
+  bundleIdPrefix: com.playbook
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+# Local Swift packages, referenced by path.
+packages:
+  DesignSystem:
+    path: Packages/DesignSystem
+  Domain:
+    path: Packages/Domain
+  Infrastructure:
+    path: Packages/Infrastructure
+  AppInterfaces:
+    path: Packages/AppInterfaces
+  FeatureMusicSearch:
+    path: Packages/FeatureMusicSearch
+  FeaturePodcasts:
+    path: Packages/FeaturePodcasts
+  FeatureMovies:
+    path: Packages/FeatureMovies
+  FeatureLibrary:
+    path: Packages/FeatureLibrary
+
+targets:
+  iTunesSearchApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Sources
+    dependencies:
+      - package: DesignSystem
+      - package: Domain
+      - package: Infrastructure
+      - package: AppInterfaces
+      - package: FeatureMusicSearch
+      - package: FeaturePodcasts
+      - package: FeatureMovies
+      - package: FeatureLibrary
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.playbook.iTunesSearchApp
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Automatic
+        # Let Xcode synthesize Info.plist so there is no file to hand-maintain.
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+
+  # A standalone catalog app that imports ONLY the DesignSystem. Designers and
+  # developers can run this to review components in isolation from the app's
+  # business logic and network — one of the big payoffs of the extraction.
+  Catalog:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Catalog
+    dependencies:
+      - package: DesignSystem
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.playbook.Catalog
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+
+  # This chapter's "preview app": compiles only FeatureLibrary and its
+  # dependencies (Domain, DesignSystem, AppInterfaces) — never
+  # FeatureMusicSearch, FeaturePodcasts, or FeatureMovies. It also links
+  # Infrastructure directly, to construct a real Core Data repository —
+  # it is a miniature composition root. The Library squad can build and run
+  # this without booting the rest of the app.
+  FeatureLibraryDemo:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: DemoApps/FeatureLibraryDemo
+    dependencies:
+      - package: FeatureLibrary
+      - package: Infrastructure
+      - package: AppInterfaces
+      - package: Domain
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.playbook.FeatureLibraryDemo
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES

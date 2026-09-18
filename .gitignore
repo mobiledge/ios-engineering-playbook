@@ -1,0 +1,14 @@
+# Generated Xcode projects (XcodeGen owns project.yml, not the .xcodeproj)
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+
+# SwiftPM build output
+.build/
+
+# Local tooling
+.claude/
+
+# OS files
+.DS_Store
