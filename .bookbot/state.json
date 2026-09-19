@@ -1,0 +1,79 @@
+{
+  "part": "part-1-architecture",
+  "max_attempts_per_chapter": 3,
+  "halted": false,
+  "halt_reason": null,
+  "last_run": null,
+  "chapters": {
+    "01": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "02": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "03": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "04": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "05": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "06": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "07": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "08": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "09": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    },
+    "10": {
+      "status": "pending",
+      "attempts": 0,
+      "cloud_green": false,
+      "mac_green": false,
+      "last_failure": null
+    }
+  }
+}

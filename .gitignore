@@ -7,8 +7,8 @@ DerivedData/
 # SwiftPM build output
 .build/
 
-# Local tooling
-.claude/
+# Local tooling (root only — chapter skill libraries under code/ ARE deliverables)
+/.claude/
 
 # OS files
 .DS_Store
