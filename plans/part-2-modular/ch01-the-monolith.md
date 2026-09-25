@@ -12,7 +12,7 @@ front matter. Code is essentially unchanged.
 
 - First chapter — no prior plans required.
 - `code/part-2-modular/ch01-the-monolith` exists: a single-app-target SwiftUI monolith with
-  `Sources/{App, Models(Track, Podcast), Networking(iTunesAPIClient), Utilities(Services, DateFormatter+Extensions), Views/{Music, Podcasts, Shared}}`,
+  `Sources/{App, Models(Track, Podcast), Networking(ITunesAPIClient), Utilities(Services, DateFormatter+Extensions), Views/{Music, Podcasts, Shared}}`,
   built with XcodeGen (`project.yml`). Features: Music search + Podcasts tabs.
 
 ## Prose tasks — `part-2-modular/01-the-monolith.md`
@@ -48,7 +48,7 @@ List the 8 chapters.
 
 - No structural changes. Only:
   - Ensure the `MONOLITH NOTE` comments cover the three coupling points the prose names
-    (views instantiate `iTunesAPIClient` directly; `RootView` knows every feature; features
+    (views instantiate `ITunesAPIClient` directly; `RootView` knows every feature; features
     reach the global `Services` facade).
   - Update `README.md` in the folder if it disagrees with the prose (schemes: `iTunesSearchApp`).
 

@@ -65,7 +65,7 @@ The chapter shows the same SwiftUI structure as the code:
 |---|---|---|
 | `App/iTunesSearchApp.swift`, `Views/RootView.swift` | same | SwiftUI `App` + `TabView` entry point |
 | `Models/Track,Podcast` | `Models/` | iTunes API response types |
-| `Networking/iTunesAPIClient` | `Networking/` | `async`/`await` URLSession client |
+| `Networking/ITunesAPIClient` | `Networking/` | `async`/`await` URLSession client |
 | `Views/Shared/PrimaryButton,AppColor` | `Packages/DesignSystem/` | extracted into a Swift package in Chapter 2 (`DSButton`, `DSColors`, …) |
 | `Views/Music/MusicSearchView,TrackRow` | same | search + list of music tracks |
 | `Views/Podcasts/PodcastsView,PodcastRow` | same | search + list of podcasts |
@@ -76,7 +76,7 @@ The chapter shows the same SwiftUI structure as the code:
 This code is deliberately coupled so the later refactors have something real to
 fix. Search the sources for `MONOLITH NOTE` to find each spot:
 
-- **Feature views instantiate `iTunesAPIClient.shared` directly** — no protocol,
+- **Feature views instantiate `ITunesAPIClient.shared` directly** — no protocol,
   no injection. The Music and Podcasts features can't compile or be tested
   without networking.
 - **`RootView` knows about every feature** — there's no composition root.

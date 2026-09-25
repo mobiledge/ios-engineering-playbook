@@ -6,7 +6,7 @@ import Infrastructure
 ///
 /// This mirrors `MusicSearchView` exactly: search, fetch, list. No detail
 /// screen — just present what the network returned. As of this chapter it
-/// no longer talks to `iTunesAPIClient` directly; it goes through the domain's
+/// no longer talks to `ITunesAPIClient` directly; it goes through the domain's
 /// `SearchMediaUseCase`, backed by the concrete `ITunesSearchRepository`
 /// constructed inline for now — Chapter 6 injects it from a composition root.
 struct PodcastsView: View {

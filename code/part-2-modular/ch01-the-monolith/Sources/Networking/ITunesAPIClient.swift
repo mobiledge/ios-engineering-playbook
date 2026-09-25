@@ -1,8 +1,8 @@
 import Foundation
 
 /// Talks to the iTunes Search API.
-final class iTunesAPIClient {
-    static let shared = iTunesAPIClient()
+final class ITunesAPIClient {
+    static let shared = ITunesAPIClient()
 
     private let session: URLSession
     private let decoder: JSONDecoder

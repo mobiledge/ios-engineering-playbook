@@ -38,7 +38,7 @@ app lifecycle throughout:
 |---|---|---|
 | `App/iTunesSearchApp.swift`, `Views/RootView.swift` | same | SwiftUI `@main App` + a `TabView` root |
 | `Models/Track,Podcast` | `Models/` | iTunes API response types |
-| `Networking/iTunesAPIClient` | `Networking/` | `async`/`await` URLSession client; URLs built inline |
+| `Networking/ITunesAPIClient` | `Networking/` | `async`/`await` URLSession client; URLs built inline |
 | `Views/Shared/*` — the design system | `Views/Shared/` | tokens (`AppColors`, `AppFont`, `AppSpacing`/`AppRadius`) + components (`AppText`, `PrimaryButton`, `CardView`, `TagView`, `ArtworkView`); extracted in Chapter 2 |
 | `Views/Music/MusicSearchView,TrackRow` | same | search + list of music tracks |
 | `Views/Podcasts/PodcastsView,PodcastRow` | same | search + list of podcasts (mirrors Music) |
@@ -49,7 +49,7 @@ app lifecycle throughout:
 This code is deliberately coupled so the later refactors have something real to
 fix. Search the sources for `MONOLITH NOTE` to find each spot:
 
-- **Feature views instantiate `iTunesAPIClient.shared` directly** — no protocol,
+- **Feature views instantiate `ITunesAPIClient.shared` directly** — no protocol,
   no injection. The Music and Podcasts features can't compile or be tested without
   networking.
 - **`RootView` knows about every feature** — there's no composition root.

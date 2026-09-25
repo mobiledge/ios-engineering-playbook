@@ -32,7 +32,7 @@ iTunesSearchApp/
     │   ├── Track.swift
     │   └── Podcast.swift
     ├── Networking/
-    │   └── iTunesAPIClient.swift
+    │   └── ITunesAPIClient.swift
     ├── Views/
     │   ├── RootView.swift           # the TabView that wires the features together
     │   ├── Shared/                  # the design system: tokens + reusable components
@@ -55,7 +55,7 @@ iTunesSearchApp/
         └── Services.swift          # logging, crash reporting, analytics, feature flags — behind plain protocols
 ```
 
-The app uses the SwiftUI app lifecycle: a single `@main App` struct and a `RootView` `TabView` stand in for the classic UIKit `AppDelegate` + `SceneDelegate` pair. Everything is neatly organized into folders, but from the compiler's perspective, this is all one giant bucket of code. `MusicSearchView` can directly instantiate `iTunesAPIClient`, which can freely reach for shared globals like `Services.logger` and `AppColors`. Nothing in the compiler stops any file from touching any other.
+The app uses the SwiftUI app lifecycle: a single `@main App` struct and a `RootView` `TabView` stand in for the classic UIKit `AppDelegate` + `SceneDelegate` pair. Everything is neatly organized into folders, but from the compiler's perspective, this is all one giant bucket of code. `MusicSearchView` can directly instantiate `ITunesAPIClient`, which can freely reach for shared globals like `Services.logger` and `AppColors`. Nothing in the compiler stops any file from touching any other.
 
 ## The Building Blocks: Roles, Not Folders
 
@@ -67,7 +67,7 @@ What the user sees on screen is only one of the six. Here's the full cast:
 2.  **Features** — Music and Podcasts (the views and their rows). This is the actual product — the screens a user touches. Features depend on the design system, the models, and the networking; nothing depends on a feature except the composition that hosts it. → They become isolated **vertical feature slices** in Chapter 4.
 3.  **Design System** — everything under `Shared/`: the tokens (`AppColors`, `Typography`, `Layout`) and the components built from them (`CardView`, `TagView`, `PrimaryButton`, …). *Many* things depend on it; it depends on almost nothing. → It's the **first thing we extract**, in Chapter 2.
 4.  **Domain** — the models (`Track`, `Podcast`) and the four service *contracts*: the protocols, plus the typed `AnalyticsEvent` and `FeatureFlag` vocabulary. This is the pure description of *what the app is about*, with no mention of UIKit, the network, or any vendor. → It becomes the **`Domain` module** in Chapter 3.
-5.  **Infrastructure** — the things that talk to the outside world: `iTunesAPIClient`, the console implementations of the four services, and the real vendor adapters that arrive later. These *implement* the Domain's contracts. → It becomes the **`Infrastructure` module** in Chapter 3, and gets inverted so Domain stops depending on it in Chapter 5.
+5.  **Infrastructure** — the things that talk to the outside world: `ITunesAPIClient`, the console implementations of the four services, and the real vendor adapters that arrive later. These *implement* the Domain's contracts. → It becomes the **`Infrastructure` module** in Chapter 3, and gets inverted so Domain stops depending on it in Chapter 5.
 6.  **Build tooling** — `project.yml` and XcodeGen. This one isn't Swift at all, and it's easy to overlook, but it's the most important block of the lot: it's the thing that actually *defines targets*, which is how every boundary in this book gets made real. → It doesn't get extracted; it grows, one module at a time, through every chapter.
 
 ### Why dependency direction is the whole game
@@ -176,7 +176,7 @@ As iTunesSearchApp becomes more successful, the team grows from 1 developer to 5
 Here are the typical problems teams face when scaling a monolith:
 
 1.  **Slow Build Times:** Every time you make a change to a single view, Xcode might need to recompile a significant portion of the entire application. Waiting for 3-5 minutes just to see a color change becomes normal.
-2.  **Merge Conflicts:** With 20 developers working in the same target, editing the same `iTunesAPIClient.swift` or `AppColors.swift`, Git merge conflicts become a daily, painful occurrence.
+2.  **Merge Conflicts:** With 20 developers working in the same target, editing the same `ITunesAPIClient.swift` or `AppColors.swift`, Git merge conflicts become a daily, painful occurrence.
 3.  **Tight Coupling (The "Spaghetti" Problem):** Because there are no boundaries enforced by the compiler, it's easy for developers to take shortcuts. The `MusicSearchView` might directly reach into the `Podcasts` feature's code, creating hidden dependencies. Folders are only a suggestion — nothing *stops* this. Over time, every part of the app can touch every other part, and the structure you see in the file tree no longer reflects how the code actually connects. When something breaks, there is no longer an obvious place to look.
 4.  **Difficult to Test:** Testing the `MusicSearch` means you have to compile the entire app, including the `Podcasts` feature, even though it isn't relevant to the test.
 5.  **Scaling Teams:** It becomes difficult to assign ownership. If a bug occurs in the network layer, who owns it? If team A is working on Music and Team B is working on Podcasts, they are constantly stepping on each other's toes.
@@ -252,7 +252,7 @@ We use [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate the Xcode p
 
 The sample code is deliberately tangled to make later chapters' refactors concrete. Search the sources for `MONOLITH NOTE` to find each pain point:
 
-*   **Feature views instantiate `iTunesAPIClient.shared` directly.** There is no protocol or injection, so the Music and Podcasts features cannot compile or be tested without the networking layer.
+*   **Feature views instantiate `ITunesAPIClient.shared` directly.** There is no protocol or injection, so the Music and Podcasts features cannot compile or be tested without the networking layer.
 *   **`RootView` knows about every feature**, and shared tokens like `AppColors` and `Logger` are global to the whole target.
 *   **Features reach for the global `Services` facade directly.** The API client calls `Services.logger.log(…)`, Music's search calls `Services.analytics.track(…)`, and Podcasts reads `Services.flags.isEnabled(.newPodcastUI)`. The four contracts are clean, but the protocols, implementations, and the build-config switch all share the target — so the boundary is a convention, not a rule the compiler enforces.
 

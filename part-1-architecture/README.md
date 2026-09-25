@@ -154,7 +154,7 @@ fetches.
 
 ### 3. Networking — *The network hides behind a contract.*
 **Beat:** the search endpoint needs a new parameter and the change touches view code.
-**Extraction:** `iTunesAPIClient` — URL building, async/await, status codes, typed errors — fronted
+**Extraction:** `ITunesAPIClient` — URL building, async/await, status codes, typed errors — fronted
 by a small protocol (`SearchClient`) and *handed to* whoever needs it, not grabbed as a global.
 **Prove it:** tests for the pure logic — URL/query construction, error mapping, decoding via a
 stubbed `URLProtocol`; we test *our* logic, not Apple's networking. **Codify it:** `add-endpoint` —
@@ -284,7 +284,7 @@ Medley/
 ├── Sources/
 │   ├── App/            # @main, RootView (TabView), AppCoordinator
 │   ├── Models/         # Track, Podcast
-│   ├── Networking/     # SearchClient protocol, iTunesAPIClient
+│   ├── Networking/     # SearchClient protocol, ITunesAPIClient
 │   ├── Features/
 │   │   ├── Music/      # MusicSearchView, MusicSearchViewModel, TrackDetailView, TrackRow
 │   │   └── Podcasts/   # PodcastsView, PodcastsViewModel, PodcastRow

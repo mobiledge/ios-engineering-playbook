@@ -3,7 +3,7 @@ import SwiftUI
 /// Searches the iTunes catalog for music and lists the results.
 ///
 /// MONOLITH NOTE: the view holds a direct reference to the concrete
-/// `iTunesAPIClient.shared`. There is no injected dependency and no protocol,
+/// `ITunesAPIClient.shared`. There is no injected dependency and no protocol,
 /// so this Music feature cannot be compiled or tested without the networking code.
 struct MusicSearchView: View {
     @State private var term = "Jack Johnson"
@@ -11,7 +11,7 @@ struct MusicSearchView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
 
-    private let api = iTunesAPIClient.shared
+    private let api = ITunesAPIClient.shared
 
     var body: some View {
         NavigationStack {

@@ -6,7 +6,7 @@ import SwiftUI
 /// screen, no persistence — just present what the network returned.
 ///
 /// MONOLITH NOTE: like the Music feature, this view holds a direct reference to
-/// the concrete `iTunesAPIClient.shared`. There is no injected dependency and no
+/// the concrete `ITunesAPIClient.shared`. There is no injected dependency and no
 /// protocol, so Podcasts cannot be compiled or tested without the networking code.
 struct PodcastsView: View {
     @State private var term = "The Daily"
@@ -14,7 +14,7 @@ struct PodcastsView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
 
-    private let api = iTunesAPIClient.shared
+    private let api = ITunesAPIClient.shared
 
     var body: some View {
         NavigationStack {

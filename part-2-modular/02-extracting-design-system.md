@@ -152,7 +152,7 @@ We pulled `Views/Shared` out in this order:
 
 The dependency points **downward** from both app targets. `iTunesSearchApp` depends on
 `DesignSystem`; so does `Catalog`. Neither `DesignSystem` — nor the compiler — has ever heard of
-`iTunesSearchApp`, `Track`, or `iTunesAPIClient`. It is now architecturally impossible for a
+`iTunesSearchApp`, `Track`, or `ITunesAPIClient`. It is now architecturally impossible for a
 design-system file to reach back into app code; the compiler enforces it.
 
 ## Verify
@@ -255,7 +255,7 @@ Three things made this work, exactly as outlined above:
 3.  Every feature file that uses them now starts with `import DesignSystem`.
 
 The compiler now *enforces* the boundary: it is impossible for a design-system component to
-reach back into `Track`, `Podcast`, or `iTunesAPIClient`.
+reach back into `Track`, `Podcast`, or `ITunesAPIClient`.
 
 ### The payoff: a Catalog app
 

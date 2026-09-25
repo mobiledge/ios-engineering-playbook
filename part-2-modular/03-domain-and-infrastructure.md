@@ -41,7 +41,7 @@ just "fetch JSON, show a list" — it has real rules to get wrong.
 >
 > **Sam:** Okay, so to test those four lines...
 >
-> **Priya:** I have to instantiate the view, which touches `iTunesAPIClient` because
+> **Priya:** I have to instantiate the view, which touches `ITunesAPIClient` because
 > `MusicSearchView` builds one, which means the whole networking stack has to compile. And
 > `CoreDataStack` is a singleton wrapping a real `NSPersistentContainer`, so the test also spins
 > up an actual Core Data store. I timed it — compiling the app target plus running one
