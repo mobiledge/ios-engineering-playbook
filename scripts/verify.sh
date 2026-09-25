@@ -152,10 +152,11 @@ if [[ "$TIER" == "mac" ]]; then
     DEST='generic/platform=iOS Simulator'
     ( cd "$CODE" && xcodebuild -project Medley.xcodeproj -scheme Medley -destination "$DEST" build >/tmp/medley-build.log 2>&1 ) \
       || fail "xcodebuild build failed (see /tmp/medley-build.log)"
-    SIM=$(xcrun simctl list devices available | grep -oE 'iPhone [0-9]+[a-zA-Z ]*' | head -1)
+    # Pick by UDID: names repeat across runtimes, and a name regex drags in trailing spaces.
+    SIM=$(xcrun simctl list devices available | grep -E '^ +iPhone ' | grep -oE '[0-9A-F]{8}(-[0-9A-F]{4}){3}-[0-9A-F]{12}' | head -1)
     if [[ -n "$SIM" ]]; then
       ( cd "$CODE" && xcodebuild -project Medley.xcodeproj -scheme Medley \
-          -destination "platform=iOS Simulator,name=$SIM" test >/tmp/medley-test.log 2>&1 ) \
+          -destination "platform=iOS Simulator,id=$SIM" test >/tmp/medley-test.log 2>&1 ) \
         || fail "xcodebuild test failed (see /tmp/medley-test.log)"
     else
       fail "no iOS simulator available to run tests"
