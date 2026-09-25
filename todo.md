@@ -33,7 +33,7 @@ carried forward; git history and half-migrated state left behind.
       all eight code end states. The canonical naming glossary is in
       `plans/part-2-modular/00-conventions.md`; the continuity contract means the rename must be
       applied uniformly so chapter-to-chapter diffs stay clean.
-- [ ] **Create the GitHub repo** `mobiledge/ios-engineering-playbook`, then add the remote and push.
+- [x] **Create the GitHub repo** `mobiledge/ios-engineering-playbook`, then add the remote and push.
 
 ## First writing task
 
