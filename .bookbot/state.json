@@ -3,12 +3,12 @@
   "max_attempts_per_chapter": 3,
   "halted": false,
   "halt_reason": null,
-  "last_run": null,
+  "last_run": "2026-09-25",
   "chapters": {
     "01": {
-      "status": "pending",
+      "status": "awaiting-mac",
       "attempts": 0,
-      "cloud_green": false,
+      "cloud_green": true,
       "mac_green": false,
       "last_failure": null
     },

@@ -9,6 +9,9 @@
 # Part I, Chapter 1 is the prototype: everything lives in ONE file in ONE
 # application target. Structure must earn its place — later chapters extract
 # it one Single-Responsibility at a time.
+#
+# The MedleyTests target is here from day one, empty on purpose: there is
+# nothing in the prototype a unit test can reach yet.
 
 name: Medley
 
@@ -41,3 +44,19 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+    scheme:
+      testTargets:
+        - MedleyTests
+
+  MedleyTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Tests/MedleyTests
+    dependencies:
+      - target: Medley
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.medley.app.tests
+        GENERATE_INFOPLIST_FILE: YES

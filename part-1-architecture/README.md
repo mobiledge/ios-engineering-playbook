@@ -8,8 +8,9 @@ Single-Responsibility extraction per chapter, each codified as a reusable AI ski
 This is **Part I** of a four-part book that follows one company, Medley, from a solo prototype to a
 full product organization. For the whole arc, see the [Series Roadmap](../README.md).
 
-> **Not written yet.** The chapter list and beat-by-beat outline below are the plan; per-chapter
-> execution plans live in [`plans/part-1-architecture/`](../plans/part-1-architecture/).
+> **In progress.** Chapter 1 is drafted; the rest of the chapter list and the beat-by-beat outline
+> below are the plan. Per-chapter execution plans live in
+> [`plans/part-1-architecture/`](../plans/part-1-architecture/).
 
 The reader finishes with a disciplined, tested MVVM-C monolith — plus an AI skill library that can
 rebuild any part of it on demand — the app Part II picks up on its first page.
@@ -113,7 +114,7 @@ skill library grows in lockstep with the ledger — one row retired, one skill g
 Each chapter title follows the series house style — **[Technical Concept] — [Engineering Law]** —
 and ends with an AI skill.
 
-1. **The Prototype** — *Structure must earn its place.*
+1. [The Prototype](01-the-prototype.md) — *Structure must earn its place.*
 2. **Models** — *Data becomes a type the moment it enters the app.*
 3. **Networking** — *The network hides behind a contract.*
 4. **View Composition** — *A view renders what it is given, and nothing else.*
