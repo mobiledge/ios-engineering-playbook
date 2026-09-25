@@ -39,10 +39,10 @@ Follow the template, minus "Where we are" (nothing precedes this chapter).
 ## Code tasks — `code/part-1-architecture/ch01-the-prototype`
 
 `ContentView.swift` is deliberately one file doing all nine jobs: an inline `URLSession` call,
-`JSONSerialization` dictionaries (**not** `Codable` — that is Ch 2's payoff), hex color literals,
-magic paddings, and a separate `Bool` for each of loading/error/empty. It must compile and run, and
-search must actually work against the iTunes Search API. Make it genuinely decent code *of its kind*
-— this is not a strawman.
+`JSONSerialization` dictionaries (**not** `Codable` — that is Ch 2's payoff), system views and
+styles with a few bare layout numbers, and a separate `Bool` for each of loading/error/empty. It
+must compile and run, and search must actually work against the iTunes Search API. Make it
+genuinely decent code *of its kind* — this is not a strawman.
 
 ```manifest
 + project.yml

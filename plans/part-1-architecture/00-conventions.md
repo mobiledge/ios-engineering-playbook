@@ -46,7 +46,7 @@ naming authority.
 | 4 | `04-view-composition.md` | View Composition | A view renders what it is given, and nothing else. | Corner-radius change breaks the search field |
 | 5 | `05-view-models.md` | View Models | Raw data never reaches a view. | `247.0` durations; loading-and-error at once |
 | 6 | `06-duplication-and-abstraction.md` | Duplication and Abstraction | Duplication is cheaper than the wrong abstraction. | Podcasts requested; cursor hovers over ⌘C |
-| 7 | `07-design-tokens.md` | Design Tokens | A value used twice is a token. | Designer counts three blues; AI invents a fourth |
+| 7 | `07-design-tokens.md` | Design Tokens | A value used twice is a token. | First brand pass: rows disagree; AI invents a third thumbnail size |
 | 8 | `08-coordinators.md` | Coordinators | A screen never decides where to go next. | Track detail + settings sheet + "deep link someday" |
 | 9 | `09-cross-cutting-services.md` | Cross-Cutting Services | Depend on what you need, not on who provides it. | Misbehaves on a stranger's phone; no logs |
 | 10 | `10-project-generation.md` | Project Generation | If it isn't in a text file, it isn't under control. | Second developer joining; `.xcodeproj` conflict |
@@ -130,7 +130,7 @@ or code.
 | View models | `<Feature>ViewModel`, `@Observable` | `<Feature>VM`, `ObservableObject` |
 | Screen state | one `ViewState` enum: `idle/loading/loaded/empty/failed` | loose `isLoading`/`error` Bools after Ch 5 |
 | Navigation | `AppCoordinator` (`@Observable`), `Destination` enum | `Router`, `NavigationManager`, `MainCoordinator` |
-| Design system | `AppColors`, `AppFont`, `AppSpacing`, `AppRadius`; `AppText`, `CardView`, `TagView`, `PrimaryButton` | raw hex or padding literals in feature code after Ch 7 |
+| Design system | `AppColors`, `AppSpacing`, `AppRadius`; `ArtworkView`; `Catalog` | custom colors or bare layout numbers in feature code after Ch 7; `AppFont`/`AppText` wrappers around system text styles |
 | Services | `Logger`, `CrashReporter`, `AnalyticsTracker`, `FeatureFlagProvider` + typed `AnalyticsEvent`/`FeatureFlag` | `Analytics.shared`, stringly-typed events |
 | Folders | `Sources/{App,Models,Networking,Features,DesignSystem,Services,Utilities}` | `ViewControllers/`, `Helpers/`, `Managers/` |
 | Feature folders | `Sources/Features/Music/`, `Sources/Features/Podcasts/` | `Sources/Views/Music/` |

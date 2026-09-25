@@ -34,7 +34,10 @@ suite; one screen; skills = `add-model`, `add-endpoint`, `extract-subview`, `add
   transparent about the division of labour: the skills produce scaffolding and tests, the founder
   makes the judgment calls. **Skills encode standards; they don't replace taste.**
 - **The ledger** — row 5 struck through.
-- **The trap** — two features now disagree about what "brand blue" is.
+- **The trap** — the two rows have already drifted. Music's thumbnail is 56 points with 12 points
+  of spacing; Podcasts' is 64 with 16. Nobody decided that, and nothing in the code says which is
+  right. Duplicating the row *structure* was correct; duplicating its bare *numbers* is what
+  drifts. That is Ch 7's opening.
 
 ## Code tasks — `code/part-1-architecture/ch06-duplication-and-abstraction`
 
@@ -55,6 +58,13 @@ suite; one screen; skills = `add-model`, `add-endpoint`, `extract-subview`, `add
 `MedleyApp.swift` to show `RootView`. Move Music's files into `Sources/Features/Music/` if Ch 4 left
 any outside it.
 
+Keep the styling minimal, as in every earlier chapter: system views, text styles, and colors, with
+bare numbers only where a customization earns it. `PodcastRow` reuses `ArtworkView` but sizes it at
+64 points (cover art reads better larger) with an `HStack(spacing: 16)`, while `TrackRow` stays at
+56 and 12. Give `ArtworkView` a `size` parameter if Ch 4 didn't. This drift is realistic, not a
+strawman: it is exactly what a copied row plus a reasonable local tweak produces. Do not fix it or
+flag it in code; the prose names it only in "The trap".
+
 ## Skill — `add-feature` (composite)
 
 Must explicitly delegate to the four earlier skills rather than restating them — that composition is
@@ -74,5 +84,6 @@ the chapter's point.
 
 ## Out of scope
 
-- No design tokens (Ch 7), no coordinator (Ch 8). Navigation stays local to each tab.
+- No design tokens (Ch 7), no brand color, no coordinator (Ch 8). Navigation stays local to each
+  tab.
 - Do not unify the two row views. That is the chapter's thesis.

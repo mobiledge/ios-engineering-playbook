@@ -131,8 +131,8 @@ and ends with an AI skill.
 
 ### 1. The Prototype — *Structure must earn its place.*
 **Beat:** Friday night idea, Sunday night TestFlight build. A single `ContentView` holds an inline
-`URLSession` call, `JSONSerialization` dictionaries, hex color literals, magic paddings, and a
-`Bool` for every screen condition. The AI assistant, asked to "add a podcasts screen," cheerfully
+`URLSession` call, `JSONSerialization` dictionaries, a few bare layout numbers, and a `Bool` for
+every screen condition. The AI assistant, asked to "add a podcasts screen," cheerfully
 offers to duplicate all of it — it has no standards to follow because none exist. The chapter is
 honest: *this is the right way to start* — shipping beats structure. Introduce SRP as the part's
 lens and open the responsibility ledger. **Prove it:** the founder tries to write a single unit test
@@ -205,20 +205,25 @@ first *composite* skill: folder layout plus calls into `add-model`, `add-endpoin
 so far, and the chapter is transparent about the division of labor: the skills produce the
 scaffolding and the tests; the founder makes the judgment calls (what to share, what to duplicate).
 Skills encode standards — they don't replace taste. **Ledger:** the view stops being the whole app.
-**Trap:** two features disagree about what "brand blue" is.
+**Trap:** the two rows have already drifted (56-point thumbnails with 12 points of spacing in
+Music, 64 and 16 in Podcasts), and nothing says which is right.
 
 ### 7. Design Tokens — *A value used twice is a token.*
-**Beat:** a designer friend counts three slightly different blues and four paddings — and the AI,
-asked for a new card, invents a fourth blue, because hex literals are all it has ever seen here.
-**Extraction:** tokens (`AppColors`, `AppFont`, `AppSpacing`/`AppRadius`) and the components built
-from them (`AppText`, `CardView`, `TagView`, `PrimaryButton`) into `DesignSystem/` — one
-target-internal folder, deliberately named for what Part II will one day make a package. **Prove it
-— honestly:** tokens are looked at, not asserted on; the feedback tool is a **preview catalog**
-rendering every token and component (the embryo of Part II's Catalog app). **Codify it:**
-`add-design-token` / `add-component` — new visual values enter through tokens, components build
-only from tokens, every component registers in the catalog; `CLAUDE.md` gains the rule that bans raw
-hex/padding literals in feature code. The AI that invented a blue now refuses to. **Ledger:** the
-views stop defining the app's look. **Trap:** a track detail screen just got approved, and nobody
+**Beat:** the first design pass. A designer friend wants a brand color and rows that match across
+tabs, and nobody can say whether 56 versus 64 was intentional. Asked for a new "Recently Played"
+row, the AI picks a *60-point* thumbnail, a third size, because bare numbers are all it has ever
+seen here. **Extraction:** tokens named by role (`AppColors.accent`, the app's one custom color;
+`AppSpacing`; `AppRadius`) into `DesignSystem/` next to `ArtworkView`, one target-internal folder
+deliberately named for what Part II will one day make a package. Both rows take their numbers from
+the tokens but stay separate views: *share values, not views.* **The restraint:** system text
+styles and semantic colors are already tokens, so there is no `AppFont` wrapper, and a value used
+once stays put. **Prove it — honestly:** tokens are looked at, not asserted on; the feedback tool is
+a **preview catalog** rendering every token and component (the embryo of Part II's Catalog app).
+**Codify it:** `add-design-token` / `add-component` — a value becomes a token when it's reused or
+carries a brand decision, components build only from tokens and system styles, every component
+registers in the catalog; `CLAUDE.md` bans custom colors and bare layout numbers in feature code.
+The AI that invented a size now asks whether it should be a token. **Ledger:** the views stop
+defining the app's look. **Trap:** a track detail screen just got approved, and nobody
 owns the word "navigate."
 
 ### 8. Coordinators — *A screen never decides where to go next.*  *(the C arrives)*

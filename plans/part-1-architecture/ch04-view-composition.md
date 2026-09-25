@@ -64,4 +64,5 @@ generic component; it stays nearly empty until Ch 7 fills it.
 ## Out of scope
 
 - No view model, no `ViewState` enum, no formatting extraction — that is Ch 5's entire payoff.
-- No design tokens: hex literals and magic paddings **stay** until Ch 7.
+- No design tokens: bare layout numbers (thumbnail size, corner radius, spacing) **stay** until
+  Ch 7.
