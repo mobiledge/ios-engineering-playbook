@@ -18,7 +18,7 @@ Plain markdown and runnable code — no site, no build step. Read the chapters h
 - `part-N-*/` — one markdown file per chapter, plus a `README.md` with that part's table of contents.
 - `code/part-N-*/chNN-*/` — the runnable end state of each chapter, picking up exactly where the
   previous chapter left off. See [`code/README.md`](code/README.md) for the convention.
-- `SERIES-ROADMAP.md`, `PREQUEL-OUTLINE.md`, `EDITORIAL-MEMO.md`, `DESIGN-SYSTEM.md` — reference docs.
+- `SERIES-ROADMAP.md`, `EDITORIAL-MEMO.md`, `DESIGN-SYSTEM.md` — reference docs.
 
 ---
 

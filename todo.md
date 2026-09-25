@@ -13,8 +13,8 @@ carried forward; git history and half-migrated state left behind.
       (skills → modules → automations → decision records).
 - [x] **Runnable code per chapter** — `code/part-N-*/chNN-*/`, XcodeGen/SwiftPM, scorecards
       (see `code/README.md`).
-- [x] **Reference docs** — `SERIES-ROADMAP.md`, `PREQUEL-OUTLINE.md`, `EDITORIAL-MEMO.md`,
-      `DESIGN-SYSTEM.md`.
+- [x] **Reference docs** — `SERIES-ROADMAP.md`, `EDITORIAL-MEMO.md`, `DESIGN-SYSTEM.md`
+      (the Part I outline now lives in `part-1-architecture/README.md`).
 - [x] **Chapter numbering** — restarts per part.
 - [x] **Part II ported** — 8 chapters + code, copied verbatim.
 - [x] **Medley skeleton** — `code/part-1-architecture/ch01-the-prototype/`.
@@ -38,4 +38,4 @@ carried forward; git history and half-migrated state left behind.
 ## First writing task
 
 - [ ] Draft **Part I, Chapter 1 — The Prototype** (*Structure must earn its place.*), one chapter
-      at a time. Outline: `PREQUEL-OUTLINE.md`.
+      at a time. Outline: `part-1-architecture/README.md`.

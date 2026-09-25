@@ -43,7 +43,7 @@ engineering organization → build a better product organization.**
 
 *A solo founder refactors a one-file SwiftUI app into a tested MVVM-C monolith, one Single
 Responsibility extraction per chapter; each chapter codifies its convention as a reusable AI
-skill. Full outline: [PREQUEL-OUTLINE.md](PREQUEL-OUTLINE.md).*
+skill. Full outline: [part-1-architecture/README.md](part-1-architecture/README.md).*
 
 1. **The Prototype** — *Structure must earn its place.*
 2. **Models** — *Data becomes a type the moment it enters the app.*

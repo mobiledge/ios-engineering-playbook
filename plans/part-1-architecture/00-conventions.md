@@ -35,8 +35,8 @@ diff -r code/part-1-architecture/ch10-project-generation code/part-2-modular/ch0
 ## Chapter list
 
 Titles come from the book's house style — **[Technical Concept] — [Engineering Law]** — as listed
-in `README.md`. The older working titles in `PREQUEL-OUTLINE.md` are content source, not naming
-authority.
+in `README.md`. The beat-by-beat outline in `part-1-architecture/README.md` is content source, not
+naming authority.
 
 | # | Prose file (`part-1-architecture/`) | Title | Law | Inciting beat |
 |---|---|---|---|---|
