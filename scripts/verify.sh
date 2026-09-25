@@ -85,16 +85,61 @@ else
       case "$sign" in
         +) [[ -e "$CODE/$path" ]] || fail "manifest: missing $CODE/$path" ;;
         -) [[ ! -e "$CODE/$path" ]] || fail "manifest: should not exist: $CODE/$path" ;;
+        \~) [[ -e "$CODE/$path" ]] || fail "manifest: missing modified file $CODE/$path" ;;
       esac
     done <<< "$MAN"
   fi
 
-  # ── continuity: the delta against the previous chapter must equal the manifest
-  if [[ -n "$PREV_CODE" && -d "$PREV_CODE" ]]; then
-    ADDED=$(diff -rq "$PREV_CODE" "$CODE" 2>/dev/null | sed -n 's/^Only in '"$(basename "$CODE")"'.*: //p' || true)
-    CHANGED=$(diff -rq "$PREV_CODE" "$CODE" 2>/dev/null | grep -c '^Files .* differ$' || true)
-    note "continuity: $(echo "$ADDED" | grep -c . || true) new paths, $CHANGED modified files vs ch$PREV_N"
-    note "  (review by eye: diff -rq $PREV_CODE $CODE)"
+  # ── continuity: the file-level delta against the previous chapter must equal the manifest.
+  #    `+` / `-` must match exactly. `~` (modified) is enforced once a plan declares any `~` line;
+  #    plans not yet sharpened get the undeclared modifications listed as a note instead.
+  if [[ -n "$PREV_CODE" && -d "$PREV_CODE" && -n "$MAN" ]]; then
+    list_files() {  # every file under $1, minus generated artifacts and OS clutter
+      ( cd "$1" && find . \( -name .DS_Store -o -name '*.xcodeproj' -o -name xcuserdata -o -name .build \
+          -o -name .swiftpm -o -name DerivedData -o -name build \) -prune -o -type f -print \
+        | sed 's|^\./||' | LC_ALL=C sort )
+    }
+    manifest_paths() {  # $1 = sign, $2 = folder a directory entry expands against
+      echo "$MAN" | while read -r sign path; do
+        [[ "$sign" == "$1" && -n "${path:-}" ]] || continue
+        if [[ -d "$2/$path" ]]; then list_files "$2" | grep "^${path%/}/"; else echo "$path"; fi
+      done | LC_ALL=C sort -u
+    }
+    TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
+    list_files "$PREV_CODE" > "$TMP/prev"
+    list_files "$CODE" > "$TMP/cur"
+    LC_ALL=C comm -13 "$TMP/prev" "$TMP/cur" > "$TMP/added"
+    LC_ALL=C comm -23 "$TMP/prev" "$TMP/cur" > "$TMP/removed"
+    LC_ALL=C comm -12 "$TMP/prev" "$TMP/cur" | while IFS= read -r f; do
+      cmp -s "$PREV_CODE/$f" "$CODE/$f" || echo "$f"
+    done > "$TMP/modified"
+    manifest_paths +  "$CODE"      > "$TMP/want_added"
+    manifest_paths -  "$PREV_CODE" > "$TMP/want_removed"
+    manifest_paths \~ "$CODE"      > "$TMP/want_modified"
+
+    note "continuity vs ch$PREV_N: $(grep -c . "$TMP/added") added, $(grep -c . "$TMP/removed") removed, $(grep -c . "$TMP/modified") modified"
+    for kind in added removed modified; do
+      if [[ "$kind" == modified && ! -s "$TMP/want_modified" ]]; then
+        [[ -s "$TMP/modified" ]] && note "  modified (plan declares no ~ lines, not enforced): $(tr '\n' ' ' < "$TMP/modified")"
+        continue
+      fi
+      EXTRA=$(LC_ALL=C comm -13 "$TMP/want_$kind" "$TMP/$kind" | tr '\n' ' ')
+      MISSING=$(LC_ALL=C comm -23 "$TMP/want_$kind" "$TMP/$kind" | tr '\n' ' ')
+      [[ -n "$EXTRA" ]]   && fail "continuity: $kind but not in manifest: $EXTRA"
+      [[ -n "$MISSING" ]] && fail "continuity: manifest says $kind, but it isn't: $MISSING"
+    done
+  fi
+
+  # ── plan-specific checks: each line of a ```check block runs in the code folder and must exit 0
+  CHECKS=$(awk '/^```check/{f=1;next} /^```/{f=0} f' "$PLAN")
+  if [[ -n "$CHECKS" ]]; then
+    N_CHECKS=0
+    while IFS= read -r c; do
+      [[ -z "$c" || "$c" == \#* ]] && continue
+      N_CHECKS=$((N_CHECKS+1))
+      ( cd "$CODE" && bash -c "$c" ) </dev/null >/dev/null 2>&1 || fail "check failed: $c"
+    done <<< "$CHECKS"
+    note "plan checks: $N_CHECKS run"
   fi
 
   # ── swift syntax check, if a toolchain exists
@@ -139,7 +184,25 @@ fi
 # ─────────────────────────────────────────── skills declared by the plan
 while read -r skill; do
   [[ -z "$skill" ]] && continue
-  [[ -f "$CODE/.claude/skills/$skill/SKILL.md" ]] || fail "skill missing: $CODE/.claude/skills/$skill/SKILL.md"
+  SK="$CODE/.claude/skills/$skill/SKILL.md"
+  [[ -f "$SK" ]] || { fail "skill missing: $SK"; continue; }
+  # ── the skill format (00-conventions.md): frontmatter, then the four fixed sections, in order
+  [[ "$(head -1 "$SK")" == "---" ]] || fail "skill $skill: must open with YAML frontmatter"
+  grep -qx "name: $skill" "$SK"   || fail "skill $skill: frontmatter needs 'name: $skill'"
+  grep -q '^description: ' "$SK"  || fail "skill $skill: frontmatter needs a description"
+  LAST_POS=0
+  for h in "## Convention" "## Why" "## Exemplar" "## Acceptance checks"; do
+    POS=$(grep -n -x -m1 "$h" "$SK" | cut -d: -f1)
+    if [[ -z "$POS" ]]; then fail "skill $skill: missing heading: $h"
+    elif (( POS < LAST_POS )); then fail "skill $skill: heading out of order: $h"
+    else LAST_POS=$POS; fi
+  done
+  # ── every code path the skill cites (e.g. its exemplar) must exist
+  CITED=$(grep -oE '`(Sources|Tests)/[^`]+`' "$SK" | tr -d '`' | sort -u)
+  [[ -n "$CITED" ]] || fail "skill $skill: names no exemplar path under Sources/ or Tests/"
+  while IFS= read -r p; do
+    [[ -z "$p" || -e "$CODE/$p" ]] || fail "skill $skill: cites a path that doesn't exist: $p"
+  done <<< "$CITED"
 done < <(grep -oE '^\+ \.claude/skills/[a-z-]+/SKILL\.md' "$PLAN" | sed 's|^+ \.claude/skills/||; s|/SKILL\.md$||')
 
 # ─────────────────────────────────────────── mac tier

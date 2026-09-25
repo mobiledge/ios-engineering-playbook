@@ -53,7 +53,8 @@ Stop immediately, change nothing, and exit if:
    This is what makes each chapter build off the last. Then apply **only** the plan's delta.
 4. **Write the prose** at `part-1-architecture/<NN>-<slug>.md` following the nine-beat template.
 5. **Apply the code delta** exactly as the plan's manifest states — every `+` path created, every
-   `-` path removed, nothing else.
+   `~` path modified, every `-` path removed, nothing else. The verifier diffs the folder against
+   chapter N−1 and fails on any file the manifest doesn't account for.
 6. **Write the chapter's skill file(s)** under the chapter code folder's `.claude/skills/`.
 
 ## Iterate until green

@@ -38,7 +38,9 @@ Plans are meant to be sharpened before their day comes up. The agent reads whate
 that morning, so an edit pushed tonight lands in tomorrow's run. The parts that matter most:
 
 - **The manifest block** — the verifier parses it literally. `+ path` must exist afterwards,
-  `- path` must not. Get this right and most of the continuity contract enforces itself.
-- **Acceptance criteria** — anything you can express as a grep belongs in the `cloud` tier, where it
-  gates the daily loop. Anything needing a compiler goes in `mac`.
+  `- path` must not, `~ path` must have changed, and the diff against the previous chapter must
+  contain nothing else. Get this right and most of the continuity contract enforces itself.
+- **The check block** — anything you can express as a grep goes in a fenced `check` block, one
+  command per line, run from the code folder; the `cloud` tier fails if any exits non-zero. Anything
+  needing a compiler goes in `mac`.
 - **Out of scope** — the cheapest way to stop a chapter from spending a later chapter's payoff.

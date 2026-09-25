@@ -25,6 +25,23 @@ For every chapter N ≥ 2:
 - No type, folder, skill, or convention may appear in prose or code without having been
   introduced, or disappear without being explicitly retired.
 
+Each plan states its delta in a fenced `manifest` block, one path per line, relative to the code
+folder. The verifier parses it literally and requires the file-level diff against chapter N−1 to
+match it exactly:
+
+```manifest
++ Sources/Models/Track.swift
+~ Sources/ContentView.swift
+- Tests/MedleyTests/PlaceholderTests.swift
+```
+
+`+` is added, `~` is modified, `-` is removed. No comments inside the block — everything after the
+sign is read as the path.
+
+A plan may also carry a fenced `check` block: one shell command per line, run from the chapter's
+code folder, each of which must exit 0. Anything a chapter's acceptance criteria can express as a
+grep belongs there.
+
 The defining acceptance test of the whole two-book arc:
 
 ```bash
@@ -76,8 +93,30 @@ chapter's own row marked as retired *in this chapter*.
 ## The skill library
 
 Each chapter codifies its standard as a skill under `.claude/skills/<name>/SKILL.md` inside that
-chapter's code folder. A skill is one page: the convention, its **why** (the pain from this
-chapter), one exemplar file path in the codebase, and acceptance checks.
+chapter's code folder. A skill is one page, in a fixed shape that Chapter 2's `add-model` sets and
+every later skill copies:
+
+```markdown
+---
+name: add-model
+description: <when the assistant should reach for this skill — one or two lines>
+---
+
+## Convention
+The rule, stated so it can be followed without reading the chapter.
+
+## Why
+The pain from this chapter that paid for the rule.
+
+## Exemplar
+One file path in the codebase, in backticks, that shows it done right.
+
+## Acceptance checks
+How to tell the job is finished: files exist, tests pass.
+```
+
+The frontmatter is what lets the assistant discover the skill; the four headings are exact, and the
+verifier checks them, in order, plus that every cited `Sources/` or `Tests/` path exists.
 
 | Chapter | Skill gained |
 |---|---|
@@ -125,7 +164,9 @@ or code.
 | App target | `Medley` | `iTunesSearchApp`, `MedleyApp` as a target name |
 | App entry point | `MedleyApp` (the `@main struct`) | — |
 | Root view | `RootView` (a `TabView`, from Ch 6) | — |
-| Models | `Track`, `Podcast` | `TrackModel`, `TrackDTO`, `TrackEntity` |
+| Models | `Track`, `Podcast` — `Decodable`, not `Codable` | `TrackModel`, `TrackDTO`, `TrackEntity` |
+| Response envelope | `SearchResponse` (Ch 2, `Sources/Models/`; moves into `ITunesAPIClient` in Ch 3) | `TrackResponse`, `APIResponse` |
+| Tests | Swift Testing (`import Testing`, `@Test`, `#expect`) from Ch 2 on | `XCTestCase` after Ch 1 |
 | Networking | `SearchClient` protocol, `ITunesAPIClient` conforming | `NetworkManager`, `APIService`, `.shared` singletons |
 | View models | `<Feature>ViewModel`, `@Observable` | `<Feature>VM`, `ObservableObject` |
 | Screen state | one `ViewState` enum: `idle/loading/loaded/empty/failed` | loose `isLoading`/`error` Bools after Ch 5 |
@@ -154,12 +195,14 @@ cloud sandbox with no Xcode**.
 ./scripts/verify.sh --tier cloud <NN>
 ```
 
-- continuity `diff -qr` against chapter N−1 equals the plan's stated delta
+- continuity: the file-level diff against chapter N−1 equals the plan's manifest — added (`+`) and
+  removed (`-`) always; modified (`~`) once the plan declares any `~` line
 - every file in the plan's file manifest exists (and every file it says to delete is gone)
+- every line of the plan's `check` block exits 0
 - banned-names grep over prose + code → 0 hits
 - prose contains all nine template headings, in order
 - ledger table present with the right rows struck through
-- the chapter's skill file exists at `.claude/skills/<name>/SKILL.md`
+- the chapter's skill file exists at `.claude/skills/<name>/SKILL.md`, in the skill format above
 - all relative markdown links resolve
 - `swiftc -parse` syntax check on every `.swift` file, if a Swift toolchain is present
 
