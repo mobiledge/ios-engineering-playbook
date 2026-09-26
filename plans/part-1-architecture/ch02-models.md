@@ -35,20 +35,24 @@ one law, empty `.claude/skills/` (holding a `.gitkeep`), and one XCTest placehol
     envelope and the decoder into the client.
   Explain why decoding at the boundary means the rest of the app never sees a dictionary again.
   Formatting stays in the view — the year and the `m:ss` duration are Ch 5's row, not this one.
-- **Prove it** — decode three fixtures with Swift Testing (`import Testing`, `@Test`, `#expect`) —
+- **Prove it** — decode four fixtures with Swift Testing (`import Testing`, `@Test`, `#expect`) —
   the book's first tests, and the moment the book switches from XCTest:
   1. happy case — a realistic response decodes into `[Track]` with the expected values;
   2. missing artwork — decodes, `artworkUrl100 == nil`. **The crash becomes this regression test.**
   3. malformed date — decoding **throws** `DecodingError` (`.dataCorrupted`). The boundary rejects
      bad data loudly instead of crashing deep in a view.
+  4. minimal — only the required keys (`trackId`, `trackName`, `artistName`); every optional
+     decodes as `nil`. This fixture is the model's contract in one file, and it keeps the skill's
+     own acceptance check ("every optional is proven nil-safe") true of its exemplar.
   They run in milliseconds.
 - **Codify it** — `add-model`. Because it is the first skill, walk through its anatomy as the
   template every later skill copies: the frontmatter (`name`, `description` — what lets the
   assistant find it), then Convention, Why (this crash), Exemplar (`Sources/Models/Track.swift`),
   Acceptance checks (fixtures + decoding tests exist and pass). Then the demo: ask the assistant to
   **show the album name under the artist** and watch the skill work — it adds
-  `collectionName: String?` to `Track`, adds it to the happy-path fixture, adds an assertion, and
-  only then touches the view. The field lands in code. Add Law 2 to `CLAUDE.md`.
+  `collectionName: String?` to `Track`, finds the happy-path fixture already carries it (fixtures
+  are real responses), asserts its value there and its `nil` in the minimal test, and only then
+  touches the view. The field lands in code. Add Law 2 to `CLAUDE.md`.
 - **The ledger** — row 1 struck through, marked retired in this chapter.
 - **Is this worth it yet?** — yes, and cheaply: two small files replaced six casts. Name the cost
   honestly: with a strict boundary, **one malformed date fails the whole search** (an error screen
@@ -62,7 +66,7 @@ one law, empty `.claude/skills/` (holding a `.gitkeep`), and one XCTest placehol
 
 Start from `ch01` verbatim, then:
 
-- **Add** `Track.swift` and `SearchResponse.swift` as described above, three fixtures, and
+- **Add** `Track.swift` and `SearchResponse.swift` as described above, four fixtures, and
   `TrackDecodingTests.swift` (Swift Testing). Load fixtures from the test bundle with a private
   class token (`Bundle(for: FixtureToken.self)`) — XcodeGen copies the `.json` files as resources
   flat into the bundle, so `project.yml` needs no new build phase.
@@ -84,6 +88,7 @@ Start from `ch01` verbatim, then:
 + Tests/MedleyTests/Fixtures/track_search_response.json
 + Tests/MedleyTests/Fixtures/track_missing_artwork.json
 + Tests/MedleyTests/Fixtures/track_malformed_date.json
++ Tests/MedleyTests/Fixtures/track_minimal.json
 + .claude/skills/add-model/SKILL.md
 ~ Sources/ContentView.swift
 ~ CLAUDE.md
@@ -97,7 +102,8 @@ Start from `ch01` verbatim, then:
 
 Convention: every API payload becomes a `Decodable` struct decoded at the boundary through the one
 shared decoder; optionality mirrors the API's real behaviour; every model ships with fixtures and
-decoding tests (happy path, each field that can be absent, each field that can be malformed).
+decoding tests (happy path, a minimal fixture proving every optional nil-safe, a regression per
+field that has gone missing in production, each field that can be malformed).
 Format per `00-conventions.md`: frontmatter, then Convention / Why / Exemplar / Acceptance checks.
 
 ## Acceptance criteria
@@ -119,13 +125,13 @@ grep -q 'struct Track: Decodable' Sources/Models/Track.swift
 grep -q 'collectionName' Sources/Models/Track.swift
 grep -q 'static let decoder' Sources/Models/SearchResponse.swift
 grep -q 'SearchResponse.decoder' Sources/ContentView.swift
-grep -rhE '^[[:space:]]*@Test' Tests | awk 'END { exit !(NR >= 3) }'
+grep -rhE '^[[:space:]]*@Test' Tests | awk 'END { exit !(NR >= 4) }'
 grep -qE '^2\. ' CLAUDE.md
 grep -q 'add-model' CLAUDE.md
 ```
 
 **mac**
-- [ ] Builds; `xcodebuild … test` passes with ≥ 3 Swift Testing decoding tests.
+- [ ] Builds; `xcodebuild … test` passes with ≥ 4 Swift Testing decoding tests.
 - [ ] A live search still shows results, including a track with no artwork (placeholder, no crash),
       and the album name under the artist.
 

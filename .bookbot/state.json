@@ -13,9 +13,9 @@
       "last_failure": null
     },
     "02": {
-      "status": "pending",
+      "status": "awaiting-mac",
       "attempts": 0,
-      "cloud_green": false,
+      "cloud_green": true,
       "mac_green": false,
       "last_failure": null
     },
