@@ -179,8 +179,9 @@ contrived-state previews. **Ledger:** the view stops rendering every pixel. **Tr
 means.
 
 ### 5. View Models — *Raw data never reaches a view.*  *(MVVM enters)*
-**Beat:** track durations render as `247.0`, release dates as ISO strings, and a three-`Bool` state
-tangle produces the famous "loading and error at once" screenshot. **Extraction:**
+**Beat:** a three-`Bool` state tangle produces two screenshots — a retry that draws the spinner on
+top of the error, and an error drawn over the previous search's results — and none of it can be
+tested, nor can the duration formatting still waiting since Chapter 1. **Extraction:**
 `MusicSearchViewModel` (`@Observable`) — owns a single `ViewState` enum
 (`idle/loading/loaded/empty/failed`), fetches through the injected `SearchClient`, and transforms
 `Track` into a display-ready row model: *the view model shapes data for presentation; the view just
