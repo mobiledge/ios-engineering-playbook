@@ -163,7 +163,7 @@ stubbed `URLProtocol`; we test *our* logic, not Apple's networking. **Codify it:
 how a new API capability enters the app: extend the protocol, implement in the client, map errors,
 test the URL and the decode. The "hand it in, don't grab it" injection rule graduates into
 `CLAUDE.md` as a project-wide law the assistant now applies everywhere. **Ledger:** the view stops
-being a networker. **Trap:** the screen is still one 400-line view.
+being a networker. **Trap:** the screen is still one 70-line `body`.
 
 ### 4. View Composition — *A view renders what it is given, and nothing else.*
 **Beat:** changing the artwork corner radius breaks the search-field layout. **Extraction:**

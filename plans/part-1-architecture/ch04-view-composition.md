@@ -11,7 +11,7 @@ render values handed to them. This is the chapter that **refuses to fake a unit 
 
 ## Start state
 
-`ch03` end state: models + injected `SearchClient`; one ~400-line `ContentView`; skills =
+`ch03` end state: models + injected `SearchClient`; one 123-line `ContentView` whose `body` is ~70 lines; skills =
 `add-model`, `add-endpoint`.
 
 ## Prose tasks — `part-1-architecture/04-view-composition.md`

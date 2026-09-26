@@ -165,7 +165,7 @@ or code.
 | App entry point | `MedleyApp` (the `@main struct`) | — |
 | Root view | `RootView` (a `TabView`, from Ch 6) | — |
 | Models | `Track`, `Podcast` — `Decodable`, not `Codable` | `TrackModel`, `TrackDTO`, `TrackEntity` |
-| Response envelope | `SearchResponse` (Ch 2, `Sources/Models/`; moves into `ITunesAPIClient` in Ch 3) | `TrackResponse`, `APIResponse` |
+| Response envelope | `SearchResponse` (Ch 2, `Sources/Models/`; moves to `Sources/Networking/` in Ch 3, used only by `ITunesAPIClient`) | `TrackResponse`, `APIResponse` |
 | Tests | Swift Testing (`import Testing`, `@Test`, `#expect`) from Ch 2 on | `XCTestCase` after Ch 1 |
 | Networking | `SearchClient` protocol, `ITunesAPIClient` conforming | `NetworkManager`, `APIService`, `.shared` singletons |
 | View models | `<Feature>ViewModel`, `@Observable` | `<Feature>VM`, `ObservableObject` |
