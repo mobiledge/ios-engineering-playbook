@@ -366,9 +366,10 @@ ch01-the-prototype/
 
 `.claude/skills/` is where the project's **skills** will live. A skill is a single page of
 instructions the assistant follows when asked to do one kind of task — "add a model", "add an
-endpoint", "add a route". It states the convention, explains *why* (with the incident that caused
-it), points at one real file in the codebase as the example to copy, and lists the checks a finished
-change has to pass. Every chapter from here on ends by writing one. By the end of Part I, "add a
+endpoint", "add a route". It lists the practices to follow, each with its reason, and the checks a
+finished change has to pass, written generally enough to carry to any app. The project-specific
+half (which law was paid for with which incident, and which file here is the example to copy) goes
+in `CLAUDE.md`. Every chapter from here on ends by writing one. By the end of Part I, "add a
 podcasts screen" will be a request the assistant can carry out *in the house style, with tests* —
 because by then the house style will be written down.
 

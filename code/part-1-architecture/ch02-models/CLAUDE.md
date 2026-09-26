@@ -19,5 +19,8 @@ has paid for it — each one records a lesson, not a preference.
 ## Skills
 
 Project skills live in `.claude/skills/`. Use the matching skill whenever a task falls under it.
+Skills are general practice; the example to copy in this codebase is listed with each one.
 
 - `add-model` — add or change a type decoded from an API response, with its fixtures and tests.
+  Example: `Sources/Models/Track.swift`, tested by `Tests/MedleyTests/TrackDecodingTests.swift`;
+  decode through `SearchResponse.decoder`.

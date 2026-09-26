@@ -43,12 +43,14 @@ one law, empty `.claude/skills/` (holding a `.gitkeep`), and one XCTest placehol
      bad data loudly instead of crashing deep in a view.
   4. minimal — only the required keys (`trackId`, `trackName`, `artistName`); every optional
      decodes as `nil`. This fixture is the model's contract in one file, and it keeps the skill's
-     own acceptance check ("every optional is proven nil-safe") true of its exemplar.
+     own acceptance check ("every optional is proven nil-safe") true of the codebase's example.
   They run in milliseconds.
 - **Codify it** — `add-model`. Because it is the first skill, walk through its anatomy as the
   template every later skill copies: the frontmatter (`name`, `description` — what lets the
-  assistant find it), then Convention, Why (this crash), Exemplar (`Sources/Models/Track.swift`),
-  Acceptance checks (fixtures + decoding tests exist and pass). Then the demo: ask the assistant to
+  assistant find it), then Best practices (a portable list any Swift app could adopt, each rule
+  with its reason) and Acceptance checks. Explain the split: the skill is general craft with no
+  Medley in it; the project-specific half — Law 2, and the pointer to `Sources/Models/Track.swift`
+  as the example to copy — lives in `CLAUDE.md`. Then the demo: ask the assistant to
   **show the album name under the artist** and watch the skill work — it adds
   `collectionName: String?` to `Track`, finds the happy-path fixture already carries it (fixtures
   are real responses), asserts its value there and its `nil` in the minimal test, and only then
@@ -100,18 +102,19 @@ Start from `ch01` verbatim, then:
 
 ## Skill — `add-model`
 
-Convention: every API payload becomes a `Decodable` struct decoded at the boundary through the one
-shared decoder; optionality mirrors the API's real behaviour; every model ships with fixtures and
-decoding tests (happy path, a minimal fixture proving every optional nil-safe, a regression per
-field that has gone missing in production, each field that can be malformed).
-Format per `00-conventions.md`: frontmatter, then Convention / Why / Exemplar / Acceptance checks.
+Portable best practices for any Swift model decoded from external data: decode once at the
+boundary through one shared decoder; `Decodable` structs with optionality that mirrors what the
+source promises; real types in source units; fixtures saved from real payloads and decoding tests
+(happy path, minimal, regression per field that has gone missing, malformed per enforced format).
+Format per `00-conventions.md`: frontmatter, then Best practices / Acceptance checks, no project
+references. `CLAUDE.md` lists it with this codebase's example (`Track.swift` and its tests).
 
 ## Acceptance criteria
 
 **cloud**
 - [ ] All nine template headings, in order. Ledger row 1 struck through, rows 2–9 live.
-- [ ] `add-model/SKILL.md` has the frontmatter and four sections, and cites
-      `Sources/Models/Track.swift` (checked by `verify.sh` for every skill).
+- [ ] `add-model/SKILL.md` has the frontmatter and both sections, names no project file or type,
+      and is listed in `CLAUDE.md` with its example (checked by `verify.sh` for every skill).
 - [ ] Continuity: the file-level diff against ch01 equals the manifest, `~` lines included.
 - [ ] Banned names → 0. Links resolve. `swiftc -parse` clean.
 - [ ] Every line of the check block below passes (run from the code folder):

@@ -1,57 +1,68 @@
 ---
 name: add-model
-description: Use when adding a type decoded from an iTunes Search API response, or adding or changing a field on an existing one (such as Track). Covers the model, its fixtures, and its decoding tests, which ship together.
+description: Use when adding a Swift model type decoded from external data (an API response, a file, a push payload), or adding or changing a field on one. Covers the type, its test fixtures, and its decoding tests, which ship together.
 ---
 
 # add-model
 
-## Convention
+## Best practices
 
-Data becomes a type the moment it enters the app.
+**Where decoding happens**
 
-1. **One `Decodable` struct per API payload**, in `Sources/Models/`, named for the thing itself:
-   `Track`, never `TrackModel` or `TrackDTO`. `Decodable`, not `Codable` — the app only reads.
-2. **Property names are the JSON keys.** No `CodingKeys` unless a key isn't a legal Swift name.
-3. **Optionality mirrors what the API promises.** A property is required only if a result can't
-   be shown without it (for `Track`: `trackId`, `trackName`, `artistName`); a response missing one
-   fails to decode. Everything Apple doesn't guarantee is optional, and the view copes with `nil`.
-   Never force-unwrap a field, and never paper over a required one with a `??` default.
-4. **Declare only the fields something uses today.** A new field arrives with its first caller.
-5. **Real types, raw units.** URLs are `URL`, dates are `Date`, numbers keep the API's units
-   (`trackTimeMillis: Int`). No formatting or display helpers on a model.
-6. **Decode once, at the boundary, through `SearchResponse.decoder`.** Nothing past that point
-   sees `Data`, JSON, or a dictionary. No `JSONSerialization`, no `as!`, no second decoder.
-7. **Every model ships with fixtures and decoding tests, in the same change:**
-   - Fixtures are saved real responses (fetch the endpoint, keep one or two results) in
-     `Tests/MedleyTests/Fixtures/`, named `<model>_<case>.json`. Edit a copy to make a bad case;
-     never hand-write a good one.
-   - One Swift Testing `@Test` per case: the happy path; a **minimal** fixture holding only the
-     required keys, with every optional expected `nil`; one regression fixture for each field that
-     has actually gone missing in production; and a malformed fixture for each field whose format
-     the decoder enforces (today: ISO 8601 dates). Decode through the same decoder the app uses.
-8. **Adding a field to an existing model follows the same steps:** add the property, check the
-   happy-path fixture carries it (real fixtures usually do), assert its value there and its `nil`
-   in the minimal test, and only then use it.
+1. **Decode once, at the boundary** — where the bytes arrive. Everything past that point receives
+   typed models, never `Data`, JSON, or `[String: Any]`. Parsing scattered across callers makes
+   every read a separate guess with its own idea of what to do when the guess is wrong.
+2. **One shared, configured decoder per data source** (date strategy, key strategy). The app and the
+   tests decode through the same instance; a test with its own decoder proves nothing about the app.
+3. **No `JSONSerialization` and casts, no `as!`, no force-unwrapped decoded values.** A trap in a
+   release build is a crash with no message.
 
-## Why
+**Shape of the type**
 
-Chapter 2's first crash. The view read artwork with `item["artworkUrl100"] as! String`; the first
-search result without artwork took the app down, earned a 1-star review, and cost a hotfix. With
-parsing scattered through the view, every read was a separate guess about Apple's JSON. A type
-states each guess once, and a fixture test checks it against a real response in milliseconds.
+4. **A struct, `Decodable` only.** Add `Encodable` when something actually encodes it — an unused
+   conformance is an untested promise. Name it for the thing (`Invoice`), not the layer
+   (`InvoiceDTO`, `InvoiceModel`).
+5. **Property names match the source's keys.** Reach for `CodingKeys` only when a key isn't a legal
+   or readable Swift name.
+6. **Optionality mirrors what the source promises.** Required only for what the app can't work
+   without (identity, the primary label); a payload missing one should fail to decode. Anything the
+   source doesn't guarantee is optional, and callers handle `nil`. Never make a field optional just
+   to get decoding to pass, and never hide a missing required value behind a `??` default.
+7. **Declare only the fields a caller uses today.** A field arrives with its first caller;
+   `Decodable` ignores the rest.
+8. **Real types, source units.** `URL` not `String`, `Date` not `String`, numbers in the source's
+   units (milliseconds stay milliseconds). No formatting or display logic on the model.
+9. **A `Date` is an instant.** If the source means a calendar day, note it on the property, and
+   format it in the source's time zone, not the user's — or the day (and at New Year, the year)
+   shifts.
+10. **`Identifiable` through the source's own stable ID** when the model is shown in lists.
 
-## Exemplar
+**Tests ship with the model, in the same change**
 
-`Sources/Models/Track.swift` — honest optionality, JSON-named properties, no helpers. Its tests are
-`Tests/MedleyTests/TrackDecodingTests.swift`; the envelope and the shared decoder are
-`Sources/Models/SearchResponse.swift`.
+11. **Fixtures are saved real payloads**, trimmed to one or two items and kept in the test target.
+    Make each bad case by editing a copy; never hand-write a good one. A hand-written fixture holds
+    what you think the source sends; a saved one holds what it does send, including the keys you
+    ignore.
+12. **One test per case:**
+    - happy path — every declared field asserted;
+    - minimal — only the required keys, every optional expected `nil`;
+    - regression — one fixture for each field that has actually gone missing in production;
+    - malformed — one fixture for each field whose format the decoder enforces (dates), expecting
+      `DecodingError`.
+13. **Assert what the framework actually does**, not what you assume — e.g. which coding path a
+    `DecodingError` reports. Let the test correct you.
+14. **Adding a field to an existing model** takes the same steps: add the property, check the happy
+    fixture carries it, assert its value there and its `nil` in the minimal test, then use it.
+15. **Decide what one bad element does to a collection.** Strict (the whole payload fails and the
+    error surfaces) is the default. Switch to per-element lossy decoding only when real failures
+    justify it, and test that path too.
+16. **Fast and offline.** Swift Testing (`@Test`, `#expect`), no network, milliseconds per test.
 
 ## Acceptance checks
 
-- [ ] The model is a `Decodable` struct in `Sources/Models/` and declares no field nothing uses.
-- [ ] A minimal fixture with only the required keys decodes, and its test expects every optional
-      property to be `nil` — including any property added in this change.
-- [ ] Every field whose format the decoder enforces (dates) has a malformed fixture and a test
-      expecting `DecodingError`.
-- [ ] `grep -rnE 'JSONSerialization|as! ' Sources` finds nothing.
-- [ ] `xcodebuild test -scheme Medley` passes, including the new tests.
+- [ ] The type is a `Decodable` struct named for the thing, declaring no field nothing uses.
+- [ ] Nothing past the boundary decodes; no `JSONSerialization`, `as!`, or force-unwrapped decoded
+      value anywhere.
+- [ ] Happy, minimal, and per-malformed-field fixtures exist, and any field added in this change is
+      asserted in both the happy and the minimal test.
+- [ ] Tests decode through the same decoder the app uses and pass without a network.

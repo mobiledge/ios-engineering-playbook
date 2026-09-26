@@ -365,59 +365,71 @@ The standard now exists in the code. It needs to exist in writing too, or the ne
 by the founder in a hurry, or by the assistant copying the nearest example) will be a guess again.
 So this chapter writes the project's first **skill**.
 
-Because it's the first, its shape is the template every later skill in the book copies. A skill is
-one page with a fixed anatomy:
+Because it's the first, its shape is the template every later skill in the book copies. And the
+first decision about that shape is what to leave *out*. Nothing in the rules this chapter learned
+is really about Medley. Decode at the boundary, make optionality honest, test against saved real
+payloads: those hold for any Swift app that reads data it doesn't control. So the skill is written
+that way, as a portable list of best practices with no project names, files, or history in it:
 
 ```markdown
 ---
 name: add-model
-description: Use when adding a type decoded from an iTunes Search API response, or adding or
-  changing a field on an existing one (such as Track). Covers the model, its fixtures, and its
-  decoding tests, which ship together.
+description: Use when adding a Swift model type decoded from external data (an API response, a
+  file, a push payload), or adding or changing a field on one. Covers the type, its test fixtures,
+  and its decoding tests, which ship together.
 ---
 
 # add-model
 
-## Convention
-Data becomes a type the moment it enters the app.
+## Best practices
 
-1. One `Decodable` struct per API payload, in `Sources/Models/`, named for the thing itself…
-2. Property names are the JSON keys…
-3. Optionality mirrors what the API promises…
+**Where decoding happens**
+
+1. **Decode once, at the boundary** — where the bytes arrive. Everything past that point receives
+   typed models, never `Data`, JSON, or `[String: Any]`. …
+2. **One shared, configured decoder per data source** (date strategy, key strategy). The app and the
+   tests decode through the same instance; a test with its own decoder proves nothing about the app.
+3. **No `JSONSerialization` and casts, no `as!`, no force-unwrapped decoded values.** …
+
+**Shape of the type**
+
+4. **A struct, `Decodable` only.** …
+6. **Optionality mirrors what the source promises.** Required only for what the app can't work
+   without (identity, the primary label). … Never make a field optional just to get decoding to
+   pass, and never hide a missing required value behind a `??` default.
 …
-7. Every model ships with fixtures and decoding tests, in the same change…
-8. Adding a field to an existing model follows the same steps…
 
-## Why
-Chapter 2's first crash. The view read artwork with `item["artworkUrl100"] as! String`…
+**Tests ship with the model, in the same change**
 
-## Exemplar
-`Sources/Models/Track.swift` — honest optionality, JSON-named properties, no helpers…
+11. **Fixtures are saved real payloads.** … Make each bad case by editing a copy; never
+    hand-write a good one.
+12. **One test per case:** happy path, minimal, regression, malformed. …
+14. **Adding a field to an existing model** takes the same steps: add the property, check the happy
+    fixture carries it, assert its value there and its `nil` in the minimal test, then use it.
+…
 
 ## Acceptance checks
-- [ ] A minimal fixture with only the required keys decodes, and its test expects every
-      optional property to be `nil` — including any property added in this change.
-- [ ] `grep -rnE 'JSONSerialization|as! ' Sources` finds nothing.
-- [ ] `xcodebuild test -scheme Medley` passes, including the new tests.
+
+- [ ] The type is a `Decodable` struct named for the thing, declaring no field nothing uses.
+- [ ] Nothing past the boundary decodes; no `JSONSerialization`, `as!`, or force-unwrapped decoded
+      value anywhere.
 …
 ```
 
-The full file is in the chapter's code folder. Each part has a job:
+The full file (sixteen practices) is in the chapter's code folder. Each part has a job:
 
 - **The frontmatter** is how the assistant *finds* the skill. The `description` is matched against
-  the task in hand, so it names the situations ("adding a type decoded from an API response,
-  or adding or changing a field"), not the contents.
-- **Convention** is the rule, written so it can be followed without reading this chapter. Rule 8
+  the task in hand, so it names situations ("adding a model type decoded from external data, or
+  adding or changing a field on one"), not contents.
+- **Best practices** are the rules, each with its reason in a sentence. A rule with its reason
+  attached gets applied with judgment; a bare rule gets applied literally or argued with. Rule 14
   matters as much as rule 1: most model work isn't a new type, it's one more field on an old one.
-- **Why** is the incident. A rule with its reason attached gets applied with judgment. A bare rule
-  gets applied literally or argued with.
-- **Exemplar** points at one real file that shows the rule followed. The assistant copies examples
-  far more reliably than it follows prose. That's the lesson of Chapter 1's podcasts proposal, and
-  here it works in our favor.
 - **Acceptance checks** say how to tell the job is done. They're checks a person or a script can
   run, not adjectives.
 
-`CLAUDE.md` gains its second law, worded as a rule with its reason, and its first skill:
+What the skill leaves out goes into `CLAUDE.md`, the one file that is about this project and no
+other. It gains its second law, worded as a rule with the incident that paid for it, and its first
+skill, listed together with the file *here* that shows the practices followed:
 
 ```diff
  1. **We ship; structure must earn its place.** …
@@ -430,16 +442,26 @@ The full file is in the chapter's code folder. Each part has a job:
 
 -Project skills live in `.claude/skills/`. There are none yet.
 +Project skills live in `.claude/skills/`. Use the matching skill whenever a task falls under it.
++Skills are general practice; the example to copy in this codebase is listed with each one.
 +
 +- `add-model` — add or change a type decoded from an API response, with its fixtures and tests.
++  Example: `Sources/Models/Track.swift`, tested by `Tests/MedleyTests/TrackDecodingTests.swift`;
++  decode through `SearchResponse.decoder`.
 ```
+
+The split does two jobs. The skill stays true when files move or get renamed, which happens in
+nearly every later chapter, and it would work unchanged in the founder's next app. The pointer to
+`Track.swift` stays too, just in the file that's allowed to know about `Track`. That pointer
+matters: the assistant copies a real example far more reliably than it follows a list. That was
+the lesson of Chapter 1's podcasts proposal, and here it works in our favor.
 
 Then the test that matters: a real request, the kind that used to produce a seventh guess. Two
 friends have asked which album a song is from, so:
 
 > **Founder:** Show the album name under the artist in each row.
 >
-> **Assistant:** This adds a field to an API model, so I'm following `add-model`.
+> **Assistant:** This adds a field to an API model, so I'm following `add-model`, with
+> `Track.swift` as the example `CLAUDE.md` points to.
 >
 > 1. `Track` gets `let collectionName: String?`. It's optional because nothing in the API
 >    guarantees it, and a song is still showable without it.
@@ -465,14 +487,15 @@ friends have asked which album a song is from, so:
 ```
 
 Compare that with Monday's podcasts proposal in Chapter 1. Same assistant, same kind of request. The
-difference is that this time there was a written standard and a real example to copy, so the field
+difference is that this time there were written practices and a real example to copy, so the field
 arrived *with its test*, and the test came before the view change. The assistant didn't need to be
 smarter. It needed the project to say what "done" means.
 
 > **Tooling sidebar — skills in other assistants.** The `SKILL.md` format with `name`/`description`
 > frontmatter is Claude Code's. Cursor rules, Copilot instruction files, and `AGENTS.md` sections
-> take the same four parts (convention, why, exemplar, checks) with different packaging. The
-> anatomy is what carries over.
+> hold the same two layers with different packaging: portable practices with their checks, and a
+> project file that says which law applies here and which file to copy. The split is what carries
+> over.
 
 ## The ledger
 

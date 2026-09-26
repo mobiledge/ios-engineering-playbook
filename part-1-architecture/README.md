@@ -91,9 +91,10 @@ honestly and use the right feedback tool instead (previews).
 **3. The "Codify it" beat.** After the proof comes the skill: the chapter distills the standard it
 just established — naming, file placement, required tests, the things reviewers would otherwise
 repeat forever — into a skill file the AI assistant applies from then on. The rhythm completes:
-*extract → prove → codify*. Each skill is small (a page), states the convention and its **why**,
-points at one exemplar file in the codebase, and lists the acceptance checks (which the "Prove it"
-tests provide). Later skills compose earlier ones, so by Ch 6 "add a feature" is one request. The
+*extract → prove → codify*. Each skill is small (a page) and portable: a list of best
+practices, each with its reason, that would hold in any Swift app, plus acceptance checks (which the
+"Prove it" tests provide). The project-specific half — the law, and which file in *this* codebase to
+copy — goes in `CLAUDE.md`. Later skills compose earlier ones, so by Ch 6 "add a feature" is one request. The
 skill library grows in lockstep with the ledger — one row retired, one skill gained.
 
 | Chapter | Skill gained |
@@ -147,9 +148,9 @@ the next developer, and not for the AI.* **Trap left open:** everything.
 structs (`Track`), decoded once at the boundary; optionality modeled honestly. `Models/` appears.
 **Prove it:** the first real tests — decode fixture JSON (happy case, missing artwork URL, malformed
 date); the crash becomes a regression test. **Codify it:** `add-model` — the part's first skill, and
-the template for all that follow: the convention (Codable struct, decode at the boundary, honest
-optionals), the why (this exact crash), the exemplar (`Track.swift`), the acceptance checks
-(fixtures + decoding tests exist and pass). The founder asks the assistant for the next model and
+the template for all that follow: portable best practices (decode at the boundary, honest
+optionals, real fixtures) and acceptance checks (fixtures + decoding tests exist and pass), while
+`CLAUDE.md` gains the law and names `Track.swift` as the example to copy. The founder asks the assistant for the next model and
 watches it arrive *with its fixtures*. **Ledger:** the view stops being a parser. **Trap:** it still
 fetches.
 

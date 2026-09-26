@@ -93,8 +93,9 @@ chapter's own row marked as retired *in this chapter*.
 ## The skill library
 
 Each chapter codifies its standard as a skill under `.claude/skills/<name>/SKILL.md` inside that
-chapter's code folder. A skill is one page, in a fixed shape that Chapter 2's `add-model` sets and
-every later skill copies:
+chapter's code folder. **A skill is portable**: a list of best practices that would apply to any
+Swift app, with no references to this project's names, files, types, or history. It is one page, in
+a fixed shape that Chapter 2's `add-model` sets and every later skill copies:
 
 ```markdown
 ---
@@ -102,21 +103,20 @@ name: add-model
 description: <when the assistant should reach for this skill — one or two lines>
 ---
 
-## Convention
-The rule, stated so it can be followed without reading the chapter.
-
-## Why
-The pain from this chapter that paid for the rule.
-
-## Exemplar
-One file path in the codebase, in backticks, that shows it done right.
+## Best practices
+A numbered list, grouped under bold subheads where it helps. Each item is a rule plus its reason
+in a sentence, stated generally enough to hold in any codebase.
 
 ## Acceptance checks
-How to tell the job is finished: files exist, tests pass.
+How to tell the job is finished: checks a person or a script can run.
 ```
 
-The frontmatter is what lets the assistant discover the skill; the four headings are exact, and the
-verifier checks them, in order, plus that every cited `Sources/` or `Tests/` path exists.
+The project-specific half lives in `CLAUDE.md`, which is project-specific by nature: the law the
+chapter's pain paid for, and — under **Skills** — each skill's one-line purpose plus the file in
+*this* codebase to copy. The chapter prose carries the story (the incident, why the rule exists).
+
+The verifier checks the frontmatter and both headings, in order; that the skill mentions neither
+`Medley` nor a `Sources/`/`Tests/` path; and that `CLAUDE.md` lists it.
 
 | Chapter | Skill gained |
 |---|---|

@@ -186,23 +186,22 @@ while read -r skill; do
   [[ -z "$skill" ]] && continue
   SK="$CODE/.claude/skills/$skill/SKILL.md"
   [[ -f "$SK" ]] || { fail "skill missing: $SK"; continue; }
-  # ── the skill format (00-conventions.md): frontmatter, then the four fixed sections, in order
+  # ── the skill format (00-conventions.md): frontmatter, then the two fixed sections, in order
   [[ "$(head -1 "$SK")" == "---" ]] || fail "skill $skill: must open with YAML frontmatter"
   grep -qx "name: $skill" "$SK"   || fail "skill $skill: frontmatter needs 'name: $skill'"
   grep -q '^description: ' "$SK"  || fail "skill $skill: frontmatter needs a description"
   LAST_POS=0
-  for h in "## Convention" "## Why" "## Exemplar" "## Acceptance checks"; do
+  for h in "## Best practices" "## Acceptance checks"; do
     POS=$(grep -n -x -m1 "$h" "$SK" | cut -d: -f1)
     if [[ -z "$POS" ]]; then fail "skill $skill: missing heading: $h"
     elif (( POS < LAST_POS )); then fail "skill $skill: heading out of order: $h"
     else LAST_POS=$POS; fi
   done
-  # ── every code path the skill cites (e.g. its exemplar) must exist
-  CITED=$(grep -oE '`(Sources|Tests)/[^`]+`' "$SK" | tr -d '`' | sort -u)
-  [[ -n "$CITED" ]] || fail "skill $skill: names no exemplar path under Sources/ or Tests/"
-  while IFS= read -r p; do
-    [[ -z "$p" || -e "$CODE/$p" ]] || fail "skill $skill: cites a path that doesn't exist: $p"
-  done <<< "$CITED"
+  # ── skills are portable: no project names or project paths (those belong in CLAUDE.md)
+  PROJECT_REFS=$(grep -nE 'Medley|`(Sources|Tests)/' "$SK" || true)
+  [[ -z "$PROJECT_REFS" ]] || fail "skill $skill: must be project-agnostic, found: $(echo "$PROJECT_REFS" | head -3 | tr '\n' ' ')"
+  # ── ...and CLAUDE.md lists the skill, which is where its example in this codebase is named
+  grep -q "\`$skill\`" "$CODE/CLAUDE.md" 2>/dev/null || fail "skill $skill: not listed in CLAUDE.md"
 done < <(grep -oE '^\+ \.claude/skills/[a-z-]+/SKILL\.md' "$PLAN" | sed 's|^+ \.claude/skills/||; s|/SKILL\.md$||')
 
 # ─────────────────────────────────────────── mac tier
